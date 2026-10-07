@@ -3,4 +3,5 @@ pandas>=2.1
 numpy>=1.22
 matplotlib>=3.7
 seaborn>=0.13
+scikit-learn
 jupyter
