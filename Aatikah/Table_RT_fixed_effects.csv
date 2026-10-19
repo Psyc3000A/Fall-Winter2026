@@ -1,0 +1,8 @@
+"Predictor","Estimate (ms)","SE","CI_95","z","p"
+"Intercept","548.20","3.57","[541.21, 555.20]","153.61","< .001"
+"Congruency (Incongruent vs Congruent)","11.71","2.49","[6.83, 16.59]","4.70","< .001"
+"Fixation (Real object vs Cross)","-1.18","1.74","[-4.59, 2.23]","-0.68","0.497"
+"Target stimulus (Face vs Arrows)","116.06","1.74","[112.64, 119.48]","66.57","< .001"
+"Congruency x Fixation","3.48","3.40","[-3.19, 10.15]","1.02","0.307"
+"Congruency x Target stimulus","-60.98","3.49","[-67.81, -54.15]","-17.49","< .001"
+"Fixation x Target stimulus","3.57","3.48","[-3.26, 10.39]","1.02","0.306"
