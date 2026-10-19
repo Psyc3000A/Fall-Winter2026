@@ -1,1 +1,17 @@
+import pandas as pd
 
+src = pd.read_parquet('data/attachment_personality_change_summary-54ee165318204078960825d327160079.parquet')
+rows = []
+for _, r in src.iterrows():
+    sig = 'Significant increase' if r['p value'] < 0.05 else 'Not significant'
+    rows.extend([
+        {'Measure': r['Measure'], 'Assessment': 'Before conflict', 'Assessment order': 0,
+         'Mean state attachment score': r['Baseline mean'], 'SD': r['Baseline SD'],
+         'Paired N': r['Paired N'], 'Significance': sig},
+        {'Measure': r['Measure'], 'Assessment': 'After conflict', 'Assessment order': 1,
+         'Mean state attachment score': r['Follow-up mean'], 'SD': r['Follow-up SD'],
+         'Paired N': r['Paired N'], 'Significance': sig}
+    ])
+chart_data = pd.DataFrame(rows)
+chart_data['Assessment'] = pd.Categorical(chart_data['Assessment'], categories=['Before conflict', 'After conflict'], ordered=True)
+chart_data = chart_data.sort_values(['Measure', 'Assessment order']).reset_index(drop=True)
