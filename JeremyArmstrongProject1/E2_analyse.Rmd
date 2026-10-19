@@ -1,0 +1,301 @@
+---
+title: "Production and False Memory: Experiment 2"
+author: Xinyi Lu
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+output: 
+  html_document:
+    fig_width: 10
+    fig_height: 7
+    toc: true
+    toc_float: true
+    theme: yeti
+    highlight: tango
+    code_folding: show
+    warnings: FALSE   # Turn off warnings
+    message: FALSE   # Turn off messages
+
+---
+
+<style>
+pre code, pre, code {
+  overflow-y: auto !important;
+  max-height: 20em;
+}
+</style>
+
+
+```{r load libraries, message=F}
+# load libraries
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(tidyverse, ggplot2, afex, effsize)
+
+# setting contrast sum as the default model output
+# options(contrasts=c('contr.sum','contr.poly'))
+
+```
+
+Link to pre-reg: https://osf.io/swkaj/
+
+# Prep/Cleaning
+
+```{r,message=F}
+
+wd = getwd() #working directory
+
+# read file
+data = read.csv("E2_data.csv")
+
+```
+
+## False Alarms - unrelated distractor words
+
+```{r}
+
+# old_new
+data <- data %>%
+  mutate(
+    studied_vs_lure = recode(wordtype, 'aloud' = "studied", "silent" = 'studied'),
+    old_new = ifelse(oldanswer == "new", 0, 1))
+
+# unrelated distractor words only
+unrelated_distractors <- data %>% 
+  filter(wordtype == "unrelated" | wordtype == "unrelated-lure")
+
+# false alarm rate for unrelated distractor words
+FA_rate = mean(unrelated_distractors$old_new)
+
+# calculate FA rates separately for 'lure' type unrelated distractors
+unrelated_distractors_wide <- unrelated_distractors %>% 
+  group_by(wordtype,randomID) %>%
+  summarize(mean_old = mean(old_new),
+            sd_old = sd(old_new))
+
+unrelated_distractors_wide %>%
+  group_by(wordtype) %>%
+  summarize(mean = mean(mean_old),
+            sd = sd(mean_old))
+
+# calculate significance for lures vs. non lures (unrelated distractors)
+distractor_anova = aov_ez(
+  data = unrelated_distractors,
+  id = "randomID",
+  dv = "old_new",
+  within = "wordtype",
+  include_aov = TRUE
+)
+
+print(distractor_anova)
+
+```
+# Proportion Old - Presented and Critical Lures
+
+```{r}
+
+# make wide data - 4 rows per sub - Presented and Critical Lures only
+four_row_data <- data %>%
+  filter(studied_vs_lure == "studied" | studied_vs_lure == "lure") %>%
+  group_by(randomID, studied_vs_lure,production) %>%
+  summarise(mean_old = mean(old_new),
+            n = length(old_new)) %>%
+  ungroup()
+
+# make even wider data - 1 row per sub - Presented and Critical Lures only
+one_row_data <- four_row_data %>%
+  select(-n) %>%
+  pivot_wider(id_cols = randomID,
+              names_from = c(production,studied_vs_lure),
+              names_sep = "_",
+              values_from = mean_old,
+              values_fn = mean
+  )
+
+# Omnibus ANOVA: Aloud/Silent x Studied/Lure 
+anova_model = aov_ez(
+  data = four_row_data,
+  id = "randomID",
+  dv = "mean_old",
+  within = c("production","studied_vs_lure"),
+  include_aov = TRUE
+)
+
+print(anova_model)
+
+# Production effect for studied words
+t.test(one_row_data$aloud_studied, one_row_data$silent_studied, paired=TRUE, var.equal = TRUE)
+cohen.d(one_row_data$aloud_studied, one_row_data$silent_studied, paired=TRUE, var.equal = TRUE)
+
+# Production effect for lures
+t.test(one_row_data$aloud_lure, one_row_data$silent_lure, paired=TRUE, var.equal = TRUE)
+cohen.d(one_row_data$aloud_lure, one_row_data$silent_lure, paired=TRUE, var.equal = TRUE)
+
+
+```
+
+# Descriptives - Proportion Old
+
+```{r}
+
+# Descriptive statistics
+four_row_data %>% group_by(production) %>%
+  summarise(mean = mean(mean_old),
+            sd = sd(mean_old),
+            se = sd/sqrt(80)) %>%
+  ungroup()
+
+four_row_data %>% group_by(studied_vs_lure) %>%
+  summarise(mean = mean(mean_old),
+            sd = sd(mean_old),
+            se = sd/sqrt(80)) %>%
+  ungroup()
+
+four_row_data %>% group_by(production,studied_vs_lure) %>%
+  summarise(mean = mean(mean_old),
+            sd = sd(mean_old),
+            se = sd/sqrt(80)) %>%
+  ungroup()
+
+
+```
+
+
+# Recognition and Familiarity
+
+```{r}
+
+# Count number of Rem/Know/New responses and calculate R/F measures
+rk_data <- data %>%
+  filter(studied_vs_lure == "studied" | studied_vs_lure == "lure") %>%
+  pivot_wider(id_cols = c(randomID, studied_vs_lure,production),
+              names_from = answer,
+              values_from = aloud_colour,
+              values_fn = length,
+              values_fill = 0
+  ) %>%
+  mutate(prop_recog = remember/(remember+new+know),
+         prop_familiar = know/(new+know)) %>%
+  mutate(prop_familiar = replace_na(prop_familiar, 0))
+
+# make longer data for ANOVA
+rk_data_longer <- rk_data %>%
+    pivot_longer(cols = c("prop_recog","prop_familiar"),
+              names_to = "RF",
+              values_to = "proportion_responses"
+)
+
+# make wider data for t-test
+rk_data_wider <- rk_data_longer %>%
+    pivot_wider(id_cols = randomID,
+              names_from = c(production, studied_vs_lure,RF),
+              names_sep = "_",
+              values_from = proportion_responses,
+              values_fn = mean
+  )
+
+
+# Omnibus 3 way ANOVA: Studied/Lure x R/F x Aloud/Silent
+rk_omnibus_model = aov_ez(
+  data = rk_data_longer,
+  id = "randomID",
+  dv = "proportion_responses",
+  within = c("production","studied_vs_lure","RF"),
+  include_aov = TRUE
+)
+
+print(rk_omnibus_model)
+
+# 2 way ANOVA: R/F x Aloud/Silent for Studied
+rk_studied_model = aov_ez(
+  data = filter(rk_data_longer,studied_vs_lure=="studied"),
+  id = "randomID",
+  dv = "proportion_responses",
+  within = c("production","RF"),
+  include_aov = TRUE
+)
+
+print(rk_studied_model)
+
+# no followup due to ns interaction
+
+
+# 2 way ANOVA: R/F x Aloud/Silent for Lures
+rk_lures_model = aov_ez(
+  data = filter(rk_data_longer,studied_vs_lure=="lure"),
+  id = "randomID",
+  dv = "proportion_responses",
+  within = c("production","RF"),
+  include_aov = TRUE
+)
+
+print(rk_lures_model)
+
+# no followup due to ns interaction
+
+```
+
+# Descriptives - Recog/Familiarity
+
+```{r}
+
+# Descriptive statistics - collapsing across RF
+rk_data_longer %>% group_by(studied_vs_lure,production) %>%
+  summarise(mean.rf = mean(proportion_responses),
+            sd.rf = sd(proportion_responses),
+            se.rf = sd.rf/sqrt(80)
+            ) %>%
+  ungroup()
+
+# Descriptive statistics - collapsing across production
+rk_data_longer %>% group_by(studied_vs_lure,RF) %>%
+  summarise(mean.rf = mean(proportion_responses),
+            sd.rf = sd(proportion_responses),
+            se.rf = sd.rf/sqrt(80)
+            ) %>%
+  ungroup()
+
+
+# Table 2
+rk_data_longer %>% group_by(studied_vs_lure,production,RF) %>%
+  summarise(mean.rf = mean(proportion_responses),
+            sd.rf = sd(proportion_responses),
+            se.rf = sd.rf/sqrt(80)
+            ) %>%
+  ungroup()
+
+
+
+```
+
+# Recognition Plot
+
+```{r}
+
+# change factor order
+four_row_data$studied_vs_lure <- factor(four_row_data$studied_vs_lure, levels = c("studied", "lure")) 
+
+
+plot2=ggplot(four_row_data, 
+       aes(x=studied_vs_lure,y=mean_old,fill=production)) +
+  stat_summary(geom = "bar", fun = mean, position=position_dodge(width=0.9)) +
+  stat_summary(geom = "errorbar", width = .3, fun.data = mean_se, position = position_dodge(width=.9)) +
+  scale_x_discrete(name=NULL,labels=c("Studied Words","Critical Lures")) +
+  scale_y_continuous(name="Proportion of 'Old' Responses", breaks= seq(0,1,0.1),expand = c(0,0)) +  coord_cartesian(ylim = c(0, 1)) +
+  geom_hline(yintercept=FA_rate, linetype="dashed", color = "black") +
+  scale_fill_manual(name=NULL,labels=c("Aloud","Silent"),
+                    values = c("#387db5", "#afd3f0")) +
+  theme(legend.position = c(.8,.9),panel.grid.minor = element_blank(), panel.grid.major = element_blank(), # blank aesthetics
+        panel.background = element_blank(), text = element_text(size=12),
+        panel.border = element_rect(fill="transparent", colour="white", linewidth = 1),
+        axis.text = element_text(colour = "black",size=12),
+        axis.line = element_line(size = 0.5, linetype = "solid", colour = "black"),
+        axis.ticks.length=unit(-0.2, "cm"),
+        axis.ticks.x = element_blank()
+  )
+
+plot2
+
+ggsave("e2_plot.tiff")
+
+```
+
+
+
