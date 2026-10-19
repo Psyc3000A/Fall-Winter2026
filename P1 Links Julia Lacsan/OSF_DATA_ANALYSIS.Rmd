@@ -1,0 +1,786 @@
+---
+title: "Infant's Moral Trait Inferences Analyses"
+author: ""
+date: "09/03/2024"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 2
+---
+
+# Read Me
+To run the following analyses, please have the following packages installed:\
+- tidyverse\
+- psych\
+- effectsize\
+- ggplot2\
+
+If you are unfamiliar with R, packages can be installed using install.packages("packageName"). You can do this by running the commented(#) text under "Data Preparation"\
+\
+The analyses in this file are ordered based on the order that they appear in the paper.\
+
+Explanation of variable names:\
+- diff: Looking time towards unfair test event minus looking time towards fair test event\
+- prop: proportion of looking time towards unfair test trial for each participant\
+- ttype: type of test trial (ie fair or unfair)\
+- condition: aggressor, protector, victim, bystander, random (also labelled control)\
+
+# Data Preparation
+```{r}
+# install.packages("tidyverse")
+# install.packages("psych")
+# install.packages("effectsize")
+# install.packages("ggplot2")
+# install.packages("lme4")
+# Load Packages
+library(psych)
+library(tidyverse)
+library(effectsize)
+library(ggplot2)
+library(lme4)
+```
+
+# Experiment 1
+
+```{r}
+# Load Data
+exp_1_data <- read.csv("exp1_data.csv")
+names(exp_1_data)[1] <- "condition"
+
+
+# Variable for total familiarization looking time
+exp_1_data$fam_total <- exp_1_data$fam_1 + exp_1_data$fam_2 + exp_1_data$fam_3 + exp_1_data$fam_4
+
+# Convert condition and subject number to factor
+exp_1_data$condition <- as.factor(exp_1_data$condition)
+exp_1_data$Subject.Number <- as.factor(exp_1_data$Subject.Number)
+
+# Data in long format
+exp_1_data_long <- gather(exp_1_data, ttype, LT, Fair.LT:Unfair.LT)
+
+# Filter by condition
+exp_1_aggressor <- filter(exp_1_data, condition == "Aggressor")
+exp_1_protector <- filter(exp_1_data, condition == "Protector")
+exp_1_victim <- filter(exp_1_data, condition == "Victim")
+exp_1_bystander <- filter(exp_1_data, condition == "Bystander")
+exp_1_control <- filter(exp_1_data, condition == "Control")
+```
+
+
+
+# Omnibus ANOVA
+
+```{r}
+model <- aov(LT ~ condition*ttype + Error(Subject.Number/ttype), data = exp_1_data_long)
+summary(model)
+eta_squared(model, alternative = "two.sided")
+```
+
+# Analyses By Condition
+
+## Aggressor Condition Analyses
+```{r}
+# t-test
+aggressor.t <- t.test(formula = diff ~ 1, data = exp_1_aggressor)
+aggressor.t
+cohens_d(exp_1_aggressor$diff, paired = TRUE)
+
+# binomial test
+binom.test(sum(exp_1_aggressor$diff > 1), sum(exp_1_aggressor$diff > 1, exp_1_aggressor$diff < -1), p = .5, alternative = "two.sided")
+```
+## Aggressor Means and SEs
+```{r}
+# Means and SDs
+mean(exp_1_aggressor$Fair.LT)
+sd(exp_1_aggressor$Fair.LT)/sqrt(32)
+mean(exp_1_aggressor$Unfair.LT)
+sd(exp_1_aggressor$Unfair.LT)/sqrt(32)
+mean(exp_1_aggressor$diff)
+sd(exp_1_aggressor$diff)/sqrt(32)
+```
+
+
+
+
+## Protector Condition Analyses
+```{r}
+# t-test
+protector.t <- t.test(formula = diff ~ 1, data = exp_1_protector)
+protector.t
+cohens_d(exp_1_protector$diff, paired = TRUE)
+
+# binomial test
+binom.test(sum(exp_1_protector$diff > 1), sum(exp_1_protector$diff > 1, exp_1_protector$diff < -1), p = .5, alternative = "two.sided")
+```
+
+## Protector Condition Means and SEs
+```{r}
+# Means and SDs
+mean(exp_1_protector$Fair.LT)
+sd(exp_1_protector$Fair.LT)/sqrt(32)
+mean(exp_1_protector$Unfair.LT)
+sd(exp_1_protector$Unfair.LT)/sqrt(32)
+mean(exp_1_protector$diff)
+sd(exp_1_protector$diff)/sqrt(32)
+```
+
+## Victim Condition Analyses
+```{r}
+# t-test
+victim.t <- t.test(formula = diff ~ 1, data = exp_1_victim)
+victim.t
+cohens_d(exp_1_victim$diff, paired = TRUE)
+
+# binomial test
+binom.test(sum(exp_1_victim$diff > 1), sum(exp_1_victim$diff > 1, exp_1_victim$diff < -1), p = .5, alternative = "two.sided")
+```
+
+## Victim Condition Means and SEs
+```{r}
+# Means and SDs
+mean(exp_1_victim$Fair.LT)
+sd(exp_1_victim$Fair.LT)/sqrt(32)
+mean(exp_1_victim$Unfair.LT)
+sd(exp_1_victim$Unfair.LT)/sqrt(32)
+mean(exp_1_victim$diff)
+sd(exp_1_victim$diff)/sqrt(32)
+```
+
+
+## Bystander Condition Analyses
+```{r}
+# t-test
+bystander.t <- t.test(formula = diff ~ 1, data = exp_1_bystander)
+bystander.t
+cohens_d(exp_1_bystander$diff, paired = TRUE)
+
+# binomial test
+binom.test(sum(exp_1_bystander$diff > 1), sum(exp_1_bystander$diff > 1, exp_1_bystander$diff < -1), p = .5, alternative = "two.sided")
+```
+## Bystander Condition Means and SEs
+```{r}
+# Means and SDs
+mean(exp_1_bystander$Fair.LT)
+sd(exp_1_bystander$Fair.LT)/sqrt(32)
+mean(exp_1_bystander$Unfair.LT)
+sd(exp_1_bystander$Unfair.LT)/sqrt(32)
+mean(exp_1_bystander$diff)
+sd(exp_1_bystander$diff)/sqrt(32)
+```
+
+## Random Movement Condtion Analyses
+```{r}
+# t-test
+baseline.t <- t.test(formula = diff ~ 1, data = exp_1_control)
+baseline.t
+cohens_d(exp_1_control$diff, paired = TRUE)
+
+# binomial test
+binom.test(sum(exp_1_control$diff > 1), sum(exp_1_control$diff > 1, exp_1_control$diff < -1), p = .5, alternative = "two.sided")
+
+# ANOVA comparing 
+colour_aov <- aov(diff ~ baseline_agent, data = exp_1_control)
+summary(colour_aov)
+eta_squared(colour_aov)
+```
+## Random Movement Condition Means and SEs
+```{r}
+# Means and SDs
+mean(exp_1_control$Fair.LT)
+sd(exp_1_control$Fair.LT)/sqrt(32)
+mean(exp_1_control$Unfair.LT)
+sd(exp_1_control$Unfair.LT)/sqrt(32)
+mean(exp_1_control$diff)
+sd(exp_1_control$diff)/sqrt(32)
+```
+
+
+# Additional Exploratory Analyses
+## Pairwise Comparisons
+### Omnibus ANOVA
+```{r}
+model <- aov(prop ~ condition, data = exp_1_data)
+summary(model)
+eta_squared(model)
+
+model <- aov(diff ~ condition, data = exp_1_data)
+summary(model)
+eta_squared(model)
+```
+
+### Means and SEs
+```{r}
+mean(exp_1_aggressor$prop)
+sd(exp_1_aggressor$prop)/sqrt(32)
+
+mean(exp_1_protector$prop)
+sd(exp_1_protector$prop)/sqrt(32)
+
+mean(exp_1_victim$prop)
+sd(exp_1_victim$prop)/sqrt(32)
+
+mean(exp_1_bystander$prop)
+sd(exp_1_bystander$prop)/sqrt(32)
+
+mean(exp_1_control$prop)
+sd(exp_1_control$prop)/sqrt(32)
+```
+
+
+### aggressor vs protector
+```{r}
+model <- t.test(exp_1_aggressor$prop, exp_1_protector$prop, var.equal = T)
+model
+cohens_d(model)
+
+model <- t.test(exp_1_aggressor$diff, exp_1_protector$diff, var.equal = T)
+model
+cohens_d(model)
+```
+
+### aggressor vs victim
+```{r}
+model <- t.test(exp_1_aggressor$prop, exp_1_victim$prop, var.equal = T)
+model
+cohens_d(model)
+
+model <- t.test(exp_1_aggressor$diff, exp_1_victim$diff, var.equal = T)
+model
+cohens_d(model)
+```
+
+### aggressor vs bystander
+```{r}
+model <- t.test(exp_1_aggressor$prop, exp_1_bystander$prop, var.equal = T)
+model
+cohens_d(exp_1_aggressor$prop, exp_1_bystander$prop, var.equal = T)
+
+model <- t.test(exp_1_aggressor$diff, exp_1_bystander$diff, var.equal = T)
+model
+cohens_d(exp_1_aggressor$diff, exp_1_bystander$diff, var.equal = T)
+```
+
+### aggressor vs random
+```{r}
+model <- t.test(exp_1_aggressor$prop, exp_1_control$prop, var.equal = T)
+model
+cohens_d(model)
+
+model <- t.test(exp_1_aggressor$diff, exp_1_control$diff, var.equal = T)
+model
+cohens_d(model)
+```
+### protector vs victim
+```{r}
+model <- t.test(exp_1_protector$prop, exp_1_victim$prop, var.equal = T)
+model
+cohens_d(model)
+
+model <- t.test(exp_1_protector$diff, exp_1_victim$diff, var.equal = T)
+model
+cohens_d(model)
+```
+
+### protector vs bystander
+```{r}
+model <- t.test(exp_1_protector$prop, exp_1_bystander$prop, var.equal = T)
+model
+cohens_d(exp_1_protector$prop, exp_1_bystander$prop, var.equal = T)
+
+model <- t.test(exp_1_protector$diff, exp_1_bystander$diff, var.equal = T)
+model
+cohens_d(exp_1_protector$diff, exp_1_bystander$diff, var.equal = T)
+```
+
+### protector vs random
+```{r}
+model <- t.test(exp_1_protector$prop, exp_1_control$prop, var.equal = T)
+model
+cohens_d(model)
+
+model <- t.test(exp_1_protector$diff, exp_1_control$diff, var.equal = T)
+model
+cohens_d(model)
+```
+
+
+### victim vs bystander
+```{r}
+model <- t.test(exp_1_victim$prop, exp_1_bystander$prop, var.equal = T)
+model
+cohens_d(exp_1_victim$prop, exp_1_bystander$prop, var.equal = T)
+
+model <- t.test(exp_1_victim$diff, exp_1_bystander$diff, var.equal = T)
+model
+cohens_d(exp_1_victim$diff, exp_1_bystander$diff, var.equal = T)
+```
+
+### victim vs random
+```{r}
+model <- t.test(exp_1_victim$prop, exp_1_control$prop, var.equal = T)
+model
+cohens_d(model)
+
+model <- t.test(exp_1_victim$diff, exp_1_control$diff, var.equal = T)
+model
+cohens_d(model)
+```
+### bystander vs control
+```{r}
+model <- t.test(exp_1_bystander$prop, exp_1_control$prop, var.equal = T)
+model
+cohens_d(exp_1_bystander$prop, exp_1_control$prop, var.equal = T)
+
+model <- t.test(exp_1_bystander$diff, exp_1_control$diff, var.equal = T)
+model
+cohens_d(exp_1_bystander$diff, exp_1_control$diff, var.equal = T)
+```
+
+### analyses correcting for multiple comparisons
+```{r}
+model <- aov(prop ~ condition, data = exp_1_data)
+TukeyHSD(model, conf.level=.95)
+pairwise.t.test(x = exp_1_data$prop, g = exp_1_data$condition, p.adjust.method = "none")
+
+model <- aov(diff ~ condition, data = exp_1_data)
+TukeyHSD(model, conf.level=.95)
+pairwise.t.test(x = exp_1_data$diff, g = exp_1_data$condition, p.adjust.method = "none")
+```
+
+
+## Age analysis
+
+### Aggressor
+```{r}
+model <- lm(prop ~ Age, data = exp_1_aggressor)
+summary(model)
+confint(model)
+
+model <- lm(diff ~ Age, data = exp_1_aggressor)
+summary(model)
+confint(model)
+```
+
+### Protector
+```{r}
+model <- lm(prop ~ Age, data = exp_1_protector)
+summary(model)
+confint(model)
+
+model <- lm(diff ~ Age, data = exp_1_protector)
+summary(model)
+confint(model)
+```
+
+### Bystander
+```{r}
+model <- lm(prop ~ Age, data = exp_1_bystander)
+summary(model)
+confint(model)
+
+model <- lm(diff ~ Age, data = exp_1_bystander)
+summary(model)
+confint(model)
+```
+
+### Victim
+```{r}
+model <- lm(prop ~ Age, data = exp_1_victim)
+summary(model)
+confint(model)
+
+model <- lm(diff ~ Age, data = exp_1_victim)
+summary(model)
+confint(model)
+```
+### Random
+```{r}
+model <- lm(prop ~ Age, data = exp_1_control)
+summary(model)
+confint(model)
+
+model <- lm(diff ~ Age, data = exp_1_control)
+summary(model)
+confint(model)
+```
+
+### Additional Supplemental Comparisons
+
+```{r}
+model <- aov(LT ~ condition*ttype + Error(Subject.Number/ttype), data = filter(exp_1_data_long, condition == "Aggressor" | condition == "Protector"))
+summary(model)
+eta_squared(model, alternative = "two.sided")
+```
+
+```{r}
+model <- aov(LT ~ condition*ttype + Error(Subject.Number/ttype), data = filter(exp_1_data_long, condition == "Aggressor" | condition == "Victim"))
+summary(model)
+eta_squared(model, alternative = "two.sided")
+```
+
+```{r}
+model <- aov(LT ~ condition*ttype + Error(Subject.Number/ttype), data = filter(exp_1_data_long, condition == "Aggressor" | condition == "Bystander"))
+summary(model)
+eta_squared(model, alternative = "two.sided")
+```
+
+```{r}
+model <- aov(LT ~ condition*ttype + Error(Subject.Number/ttype), data = filter(exp_1_data_long, condition == "Aggressor" | condition == "Control"))
+summary(model)
+eta_squared(model, alternative = "two.sided")
+```
+
+```{r}
+model <- aov(LT ~ condition*ttype + Error(Subject.Number/ttype), data = filter(exp_1_data_long, condition == "Protector" | condition == "Victim"))
+summary(model)
+eta_squared(model, alternative = "two.sided")
+```
+
+```{r}
+model <- aov(LT ~ condition*ttype + Error(Subject.Number/ttype), data = filter(exp_1_data_long, condition == "Protector" | condition == "Bystander"))
+summary(model)
+eta_squared(model, alternative = "two.sided")
+```
+
+```{r}
+model <- aov(LT ~ condition*ttype + Error(Subject.Number/ttype), data = filter(exp_1_data_long, condition == "Protector" | condition == "Control"))
+summary(model)
+eta_squared(model, alternative = "two.sided")
+```
+
+```{r}
+model <- aov(LT ~ condition*ttype + Error(Subject.Number/ttype), data = filter(exp_1_data_long, condition == "Victim" | condition == "Bystander"))
+summary(model)
+eta_squared(model, alternative = "two.sided")
+```
+
+```{r}
+model <- aov(LT ~ condition*ttype + Error(Subject.Number/ttype), data = filter(exp_1_data_long, condition == "Victim" | condition == "Control"))
+summary(model)
+eta_squared(model, alternative = "two.sided")
+```
+
+```{r}
+model <- aov(LT ~ condition*ttype + Error(Subject.Number/ttype), data = filter(exp_1_data_long, condition == "Bystander" | condition == "Control"))
+summary(model)
+eta_squared(model, alternative = "two.sided")
+```
+
+
+
+# Visualization
+```{r}
+exp_1_data_long$condition <- as.character(exp_1_data_long$condition)
+exp_1_data_long$condition[exp_1_data_long$condition == "agressor"] <- "Aggressor"
+exp_1_data_long$condition[exp_1_data_long$condition == "Control"] <- "Random"
+exp_1_data_long$condition[exp_1_data_long$condition == "protector"] <- "Protector"
+exp_1_data_long$condition[exp_1_data_long$condition == "bystander"] <- "Bystander"
+exp_1_data_long$condition[exp_1_data_long$condition == "victim"] <- "Victim"
+exp_1_data_long$ttype[exp_1_data_long$ttype == "Fair.LT"] <- "Fair"
+exp_1_data_long$ttype[exp_1_data_long$ttype == "Unfair.LT"] <- "Unfair"
+
+exp_1_data_long$condition <- factor(exp_1_data_long$condition, levels = c("Protector", "Victim","Random", "Bystander", "Aggressor"))
+ggplot(data= exp_1_data_long, aes(x = ttype, y = LT, fill = ttype)) + facet_wrap(~condition, nrow=1) +
+  geom_line(aes(group=Subject.Number))+
+  geom_boxplot(width = 0.5, coef = 0) +
+  geom_jitter(width=0.02) + 
+  ylab("Time Looking at Test Trial\n(in sec)") +  
+  xlab("Test Trial Type") + 
+  theme(legend.position = "none") + 
+  theme_classic() +  
+  scale_fill_manual(values = c("#F57F17", "#1E88E5")) + 
+  guides(fill=guide_legend(title="Test Trial Type")) +
+  stat_summary(geom = "point", fun.y = "mean", col = "black", size = 3, shape = 23, fill = "red") +
+  theme(text = element_text(size=10),
+        plot.title = element_text(size=20),
+        axis.text.x = element_text(size=15),
+        axis.text.y = element_text(size=15),
+        axis.title.x = element_text(size=15),
+        axis.title.y = element_text(size=15),
+        strip.text = element_text(size = 15),
+      legend.title = element_text(size=15),
+      legend.text = element_text(size=15))
+
+ggsave("Experiment 1 Results.png", width = 9, height = 6)
+
+exp_1_data$condition <- as.character(exp_1_data$condition)
+exp_1_data$condition[exp_1_data$condition == "Control"] <- "Random"
+
+exp_1_data$condition <- factor(exp_1_data$condition, levels = c( "Protector", "Victim",  "Random", "Bystander","Aggressor"))
+ggplot(data= exp_1_data, aes(x = condition, y = prop)) +
+  geom_boxplot(width = 0.5, coef = 0) +
+  geom_jitter(width=0.02) + 
+  geom_hline(yintercept = .5, linetype = "dashed") +
+  ylab("Proportion Looking to \nUnfair Trial") +  
+  xlab("Condition") + 
+  theme(legend.position = "none") + 
+  theme_classic() +  
+  stat_summary(geom = "point", fun.y = "mean", col = "black", size = 3, shape = 23, fill = "red") +
+  theme(text = element_text(size=10),
+        plot.title = element_text(size=20),
+        axis.text.x = element_text(size=15),
+        axis.text.y = element_text(size=15),
+        axis.title.x = element_text(size=20),
+        axis.title.y = element_text(size=20),
+        strip.text = element_text(size = 15),
+      legend.title = element_text(size=15),
+      legend.text = element_text(size=15))
+
+ggsave("Experiment 1 Proportion Results.png", width = 9, height = 6)
+```
+
+# Supplementary Familiarization Analysis
+```{r}
+exp_1_data_fam <- gather(exp_1_data, fam, LT, fam_1:fam_4)
+order <- c("Protector", "Aggressor", "Victim", "Bystander", "Random")
+
+exp_1_data_fam$condition <- factor(exp_1_data_fam$condition, levels = order)
+
+model <- aov(LT ~ condition*fam + Error(Subject.Number/fam), data = exp_1_data_fam)
+summary(model)
+eta_squared(model, alternative = "two.sided")
+
+model <- aov(LT ~ condition*fam + Error(Subject.Number/fam), data = exp_1_data_fam %>% filter(condition == "Aggressor" | condition == "Protector"))
+summary(model)
+eta_squared(model, alternative = "two.sided")
+
+model <- aov(LT ~ condition*fam + Error(Subject.Number/fam), data = exp_1_data_fam %>% filter(condition == "Aggressor" | condition == "Victim"))
+summary(model)
+eta_squared(model, alternative = "two.sided")
+
+model <- aov(LT ~ condition*fam + Error(Subject.Number/fam), data = exp_1_data_fam %>% filter(condition == "Aggressor" | condition == "Bystander"))
+summary(model)
+eta_squared(model, alternative = "two.sided")
+
+model <- aov(LT ~ condition*fam + Error(Subject.Number/fam), data = exp_1_data_fam %>% filter(condition == "Aggressor" | condition == "Random"))
+summary(model)
+eta_squared(model, alternative = "two.sided")
+
+model <- aov(LT ~ condition*fam + Error(Subject.Number/fam), data = exp_1_data_fam %>% filter(condition == "Protector" | condition == "Victim"))
+summary(model)
+eta_squared(model, alternative = "two.sided")
+
+model <- aov(LT ~ condition*fam + Error(Subject.Number/fam), data = exp_1_data_fam %>% filter(condition == "Protector" | condition == "Bystander"))
+summary(model)
+eta_squared(model, alternative = "two.sided")
+
+model <- aov(LT ~ condition*fam + Error(Subject.Number/fam), data = exp_1_data_fam %>% filter(condition == "Protector" | condition == "Random"))
+summary(model)
+eta_squared(model, alternative = "two.sided")
+
+model <- aov(LT ~ condition*fam + Error(Subject.Number/fam), data = exp_1_data_fam %>% filter(condition == "Victim" | condition == "Bystander"))
+summary(model)
+eta_squared(model, alternative = "two.sided")
+
+model <- aov(LT ~ condition*fam + Error(Subject.Number/fam), data = exp_1_data_fam %>% filter(condition == "Victim" | condition == "Random"))
+summary(model)
+eta_squared(model, alternative = "two.sided")
+
+model <- aov(LT ~ condition*fam + Error(Subject.Number/fam), data = exp_1_data_fam %>% filter(condition == "Random" | condition == "Bystander"))
+summary(model)
+eta_squared(model, alternative = "two.sided")
+```
+
+```{r}
+summary(lm(diff ~ fam_total + condition, data = exp_1_data))
+summary(lm(diff ~ fam_total*condition, data = exp_1_data))
+summary(lm(diff ~ fam_total, data = exp_1_data))
+
+
+summary(lm(diff ~ fam_total + condition, data = exp_1_data))
+summary(lm(diff ~ fam_total*condition, data = exp_1_data))
+summary(lm(diff ~ fam_total, data = exp_1_data))
+```
+
+```{r}
+ggplot(data = exp_1_data_fam, aes(x = fam, y = LT, fill = condition)) +
+  stat_summary(fun = "mean", geom = "bar", position = "dodge") +
+   stat_summary(fun.data = "mean_se", geom = "errorbar", position = position_dodge(.9), width = .2) +
+  theme_classic()
+
+```
+
+# Experiment 2
+
+```{r}
+exp_2_data <- read.csv("exp2_data.csv")
+exp_2_data$Subject.Number <- as.factor(exp_2_data$Subject.Number)
+exp_2_data$daycare_presence[exp_2_data$daycare_hours == 1] <- 0
+exp_2_data$daycare_presence[exp_2_data$daycare_hours > 1] <- .5
+exp_2_data$daycare_presence[exp_2_data$daycare_hours > 4] <- 1
+exp_2_data$sibling_presence[exp_2_data$siblings > 0] <- 1
+exp_2_data$sibling_presence[exp_2_data$siblings < 1] <- 0
+exp_2_data$daycare_composite <- exp_2_data$daycare_presence + exp_2_data$sibling_presence
+
+exp_2_long_data <- pivot_longer(data = exp_2_data, cols = c("Unfair.LT", "Fair.LT"), names_to = "ttype", values_to = "LT")
+
+exp_2_intervener <- exp_2_data %>%
+  filter(condition == "Intervener")
+exp_2_aggressor <- exp_2_data %>% 
+  filter(condition == "Aggressor")
+
+exp_2_intervener_long <- exp_2_intervener %>%
+  pivot_longer(cols = c("Unfair.LT", "Fair.LT"), names_to = "ttype", values_to = "LT")
+exp_2aggressor_long <- exp_2_aggressor %>%
+  pivot_longer(cols = c("Unfair.LT", "Fair.LT"), names_to = "ttype", values_to = "LT")
+
+combined_data <- read.csv("combined_data.csv")
+combined_data$Subject.Number <- as.factor(combined_data$Subject.Number)
+
+combined_aggressor <- filter(combined_data, condition == "Aggressor")
+combined_intervener <- filter(combined_data, condition == "Intervener")
+
+combined_long <- combined_data %>%
+  pivot_longer(cols = c("Unfair.LT", "Fair.LT"), names_to = "ttype", values_to = "LT")
+combined_aggressor_long <- combined_long %>% 
+  filter(condition == "Aggressor")
+combined_intervener_long <- combined_long %>% 
+  filter(condition == "Intervener")
+
+exp_2_data_fam <- gather(exp_2_data, fam_num, LT, fam_1:fam_4)
+order <- c("Intervener", "Aggressor")
+
+exp_2_data_fam$condition <- factor(exp_2_data_fam$condition, levels = order)
+```
+
+# ANOVA
+```{r}
+model <- aov(LT ~ condition*ttype + Error(Subject.Number/ttype), data = exp_2_long_data)
+summary(model)
+eta_squared(model, alternative = "two.sided", ci = .95)
+```
+
+# t-test and binomial tests
+```{r}
+t.test(exp_2_intervener$Unfair.LT, exp_2_intervener$Fair.LT, paired = T)
+cohens_d(exp_2_intervener$Unfair.LT, exp_2_intervener$Fair.LT, paired = T)
+binom.test(sum(exp_2_intervener$diff > 1), sum(exp_2_intervener$diff > 1, exp_2_intervener$diff < -1), p = .5, alternative = "two.sided")
+
+t.test(exp_2_aggressor$Unfair.LT, exp_2_aggressor$Fair.LT, paired = T)
+cohens_d(exp_2_aggressor$Unfair.LT, exp_2_aggressor$Fair.LT, paired = T)
+binom.test(sum(exp_2_aggressor$diff > 1), sum(exp_2_aggressor$diff > 1, exp_2_aggressor$diff < -1), p = .5, alternative = "two.sided")
+```
+
+# Social Network and Age
+```{r}
+model <- lm(prop ~ daycare_composite*condition, data = exp_2_data)
+summary(model)
+confint(model)
+
+t.test(exp_2_intervener$diff[exp_2_intervener$daycare_composite == 2], exp_2_aggressor$diff[exp_2_aggressor$daycare_composite == 2], var.equal = T)
+cohens_d(exp_2_intervener$diff[exp_2_intervener$daycare_composite == 2], exp_2_aggressor$diff[exp_2_aggressor$daycare_composite == 2], var.equal = T)
+
+t.test(exp_2_intervener$diff[exp_2_intervener$daycare_composite == 0], exp_2_aggressor$diff[exp_2_aggressor$daycare_composite == 0], var.equal = T)
+cohens_d(exp_2_intervener$diff[exp_2_intervener$daycare_composite == 0], exp_2_aggressor$diff[exp_2_aggressor$daycare_composite == 0], var.equal = T)
+
+model <- lm(prop ~ condition*daycare_presence + condition*sibling_presence, data = exp_2_data)
+summary(model)
+confint(model)
+
+model <- lm(prop ~ daycare_composite, data = exp_2_intervener)
+summary(model)
+confint(model)
+model <- lm(prop ~ daycare_composite, data = exp_2_aggressor)
+summary(model)
+confint(model)
+
+model <- lmer(diff ~ Age_Months + (1|study), data = combined_intervener)
+summary(model)
+confint(model)
+model <- lmer(diff ~ Age_Months + (1|study), data = combined_aggressor)
+summary(model)
+confint(model)
+
+model <- lmer(prop ~ Age_Months + (1|study), data = combined_intervener)
+summary(model)
+confint(model)
+model <- lmer(prop ~ Age_Months + (1|study), data = combined_aggressor)
+summary(model)
+confint(model)
+
+model <- lm(daycare_composite ~ Age_Months, data = exp_2_data)
+summary(model)
+confint(model)
+
+model <- lm(prop ~ condition*daycare_composite + condition*Age_Months, data = exp_2_data)
+summary(model)
+confint(model)
+
+
+```
+
+
+# Visualization
+```{r}
+exp_2_long_data$condition <- as.character(exp_2_long_data$condition)
+exp_2_long_data$condition[exp_2_long_data$condition == "Intervener"] <- "Protector"
+exp_2_long_data$ttype[exp_2_long_data$ttype == "Fair.LT"] <- "Fair"
+exp_2_long_data$ttype[exp_2_long_data$ttype == "Unfair.LT"] <- "Unfair"
+
+exp_2_long_data$condition <- factor(exp_2_long_data$condition, levels = c("Protector", "Aggressor"))
+
+ggplot(data= exp_2_long_data, aes(x = ttype, y = LT, fill = ttype)) + facet_wrap(~condition, nrow=1) +
+  geom_line(aes(group=Subject.Number))+
+  geom_boxplot(width = 0.5, coef = 0) +
+  geom_jitter(width=0.02) + 
+  ylab("Time Looking at Test Trial\n(in sec)") +  
+  xlab("Test Trial Type") + 
+  theme(legend.position = "none") + 
+  theme_classic() +  
+  scale_fill_manual(values = c("#F57F17", "#1E88E5")) + 
+  guides(fill=guide_legend(title="Test Trial Type")) +
+  stat_summary(geom = "point", fun.y = "mean", col = "black", size = 3, shape = 23, fill = "red") +
+  theme(text = element_text(size=10),
+        plot.title = element_text(size=20),
+        axis.text.x = element_text(size=15),
+        axis.text.y = element_text(size=15),
+        axis.title.x = element_text(size=15),
+        axis.title.y = element_text(size=15),
+        strip.text = element_text(size = 15),
+      legend.title = element_text(size=15),
+      legend.text = element_text(size=15))
+
+ggsave("Experiment 2 Results.png", width = 6, height = 6)
+```
+
+```{r}
+exp_2_data$condition <- as.character(exp_2_data$condition)
+exp_2_data$condition[exp_2_data$condition == "Intervener"] <- "Protector"
+exp_2_data$condition <- factor(exp_2_data$condition, levels = c("Protector", "Aggressor"))
+
+ggplot(data = exp_2_data, aes(x = daycare_composite, y = prop, fill = condition)) +
+  geom_smooth(method = lm, col = "black")+
+  scale_fill_manual(values = c("#F57F17", "#1E88E5")) + 
+  geom_point(aes(col = condition)) +
+  scale_color_manual(values = c("#F57F17", "#1E88E5")) +
+  ylab("Proportion Score") +  
+  xlab("Sibling and Daycare Composite Score") + 
+  labs(fill = "Condition", col = "Condition") +
+  theme(legend.position = "none") + 
+  theme_classic() +
+  theme(text = element_text(size=10),
+        plot.title = element_text(size=20),
+        axis.text.x = element_text(size=15),
+        axis.text.y = element_text(size=15),
+        axis.title.x = element_text(size=15),
+        axis.title.y = element_text(size=15),
+        strip.text = element_text(size = 15),
+      legend.title = element_text(size=15),
+      legend.text = element_text(size=15))
+ggsave("Daycare Results.png", width = 8, height = 6)
+```
+
+# Familiarization Data
+```{r}
+model <- aov(LT ~ condition*fam_num, data = exp_2_data_fam)
+summary(model)
+eta_squared(model, alternative = "two.sided")
+
+ggplot(data = exp_2_data_fam, aes(x = fam_num, y = LT, fill = condition)) +
+  stat_summary(fun = "mean", geom = "bar", position = position_dodge(.9)) +
+   stat_summary(fun.data = "mean_se", geom = "errorbar", position = position_dodge(.9), width = .2) +
+  theme_classic()
+```
+
+
