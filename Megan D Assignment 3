@@ -1,0 +1,6 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+nhanes=pd.read_csv("https://raw.githubusercontent.com/Psyc3000A/Data/refs/heads/main/nhanes.csv")
+
+children = nhanes[nhanes["AgeInYearsAtScreening"] < 18]
+children["StandingHeightCm"].hist(bins=200, legend=True)
