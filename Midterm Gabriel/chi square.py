@@ -1,0 +1,1 @@
+expected, observed, result = pg.chi2_independence(data=df, x='treatment', y='outcome')
