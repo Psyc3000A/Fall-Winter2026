@@ -7,6 +7,9 @@ Lab Question 2:
 Chi square without extra record is in the file: 
 https://github.com/Psyc3000A/Fall-Winter2026/blob/main/MT1-Aatikah/Lab%20Q3%20Chi-Square.csv
 Lab question 4 pt1:
+https://github.com/Psyc3000A/Fall-Winter2026/blob/main/MT1-Aatikah/Lab%20Q4%20Graph.png
+Lab Question 4 pt2:
+
 
 
 
