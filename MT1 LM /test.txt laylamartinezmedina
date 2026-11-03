@@ -25,3 +25,6 @@ expected, observed, result = pg.chi2_independence(data=df, x='AgeInYearsAtScreen
 result = pg.linear_regression(X=df[['StandingHeightCm']], y=df['AgeInYearsAtScreening'], remove_na=True)
 sns.regplot(x=df[['StandingHeightCm']], y=df['AgeInYearsAtScreening'])
 #Graph was created by code
+#COMPARISON IN AGE 
+result = pg.linear_regression(X=df[['EverBreastfedOrFedBreastmilk']], y=df['AgeInMonthsAtScreening0To24Mos'], remove_na=True)
+sns.regplot(x=df[['EverBreastfedOrFedBreastmilk']], y=df['AgeInMonthsAtScreening0To24Mos'])
