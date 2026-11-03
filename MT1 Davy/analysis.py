@@ -6,7 +6,7 @@ result = pd.DataFrame({
 })
 result = pg.linear_regression(X=df[['AgeInYearsAtScreening']], y=df['StandingHeightCm'], remove_na=True)
 sns.regplot(x=df[['AgeInYearsAtScreening']], y=df['StandingHeightCm'])
-children = df[df["AgeInYearsAtScreening"] < 18]
-children["StandingHeightCm"].hist(bins=200, legend=True)
-result = pg.linear_regression(X=children[['AgeInYearsAtScreening']], y=children['StandingHeightCm'], remove_na=True)
-sns.regplot(x=children[['AgeInYearsAtScreening']], y=children['StandingHeightCm'])
+df = df[df["AgeInYearsAtScreening"] < 18]
+
+result = pg.linear_regression(X=df[['AgeInYearsAtScreening']], y=df['StandingHeightCm'], remove_na=True)
+sns.regplot(x=df[['AgeInYearsAtScreening']], y=df['StandingHeightCm'])
