@@ -1,4 +1,4 @@
-test1
+#SLEEP DATA SET 
 import pandas as pd
 x = df[['A', 'extra', 'group', 'ID']]
 result = pd.DataFrame({
@@ -6,3 +6,18 @@ result = pd.DataFrame({
     "SD": x.std(), "Median": x.median(), "Minimum": x.min(),
     "Maximum": x.max(), "Skewness": x.skew(), "Kurtosis": x.kurt()
 })
+#DEFAULT DATA SET
+x = df[['participant', 'age', 'sleep', 'stress']]
+result = pd.DataFrame({
+    "N": x.count(), "Missing": x.isna().sum(), "Mean": x.mean(),
+    "SD": x.std(), "Median": x.median(), "Minimum": x.min(),
+    "Maximum": x.max(), "Skewness": x.skew(), "Kurtosis": x.kurt()
+})
+
+#CHI-SQUARE WITH EXTRA
+expected, observed, result = pg.chi2_independence(data=df, x='A', y='extra')
+#CHI-SQUARE WITHOUT EXTRA
+expected, observed, result = pg.chi2_independence(data=df, x='A')
+(Analysis failed without 'extra')
+#REGRESSION
+expected, observed, result = pg.chi2_independence(data=df, x='AgeInYearsAtScreening', y='GeneralHealthCondition') 
