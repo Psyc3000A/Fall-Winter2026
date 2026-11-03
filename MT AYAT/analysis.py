@@ -11,5 +11,5 @@ result = x.describe()
 result = pg.linear_regression(X=df[['AgeInYearsAtScreening']], y=df['StandingHeightCm'], remove_na=True)
 sns.regplot(x=df[['AgeInYearsAtScreening']], y=df['StandingHeightCm'])
 
-children = nhanes[nhanes["ageinyearsatscreening"]<18]
-children[standingheightcm"].hist_bins=200, legend=True)
+df = nhanes[nhanes["ageinyearsatscreening"]<18]
+df["standingheightcm"].hist_bins=200, legend=True)
