@@ -10,3 +10,7 @@ result = x.describe()
 #NHANES (age x height)
 result = pg.linear_regression(X=df[['AgeInYearsAtScreening']], y=df['StandingHeightCm'], remove_na=True)
 sns.regplot(x=df[['AgeInYearsAtScreening']], y=df['StandingHeightCm'])
+#NHANES <18
+df = df[df["AgeInYearsAtScreening"] < 18 ]
+result = pg.linear_regression(X=df[['AgeInYearsAtScreening']], y=df['StandingHeightCm'], remove_na=True)
+sns.regplot(x=df[['AgeInYearsAtScreening']], y=df['StandingHeightCm'])
