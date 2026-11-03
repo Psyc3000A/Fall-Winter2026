@@ -1,5 +1,5 @@
 Lab Question 1:
-Code for both datasets:
+Code for both datasets:https://github.com/Psyc3000A/Fall-Winter2026/blob/main/MT1-Aatikah/analysis%20(2).py
 The description for the default dataset:https://github.com/Psyc3000A/Fall-Winter2026/blob/main/MT1-Aatikah/Lab%20Q1%20Default%20dataset%20description.csv
 The description for the sleep dataset:https://github.com/Psyc3000A/Fall-Winter2026/blob/main/MT1-Aatikah/Lab%20Q1%20sleep%20dataset%20description.csv
 
