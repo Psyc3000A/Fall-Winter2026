@@ -9,3 +9,7 @@ result = x.describe()
 
 result = pg.linear_regression(X=df[['AgeInYearsAtScreening']], y=df['StandingHeightCm'], remove_na=True)
 sns.regplot(x=df[['AgeInYearsAtScreening']], y=df['StandingHeightCm'])
+
+df = df[df['AgeInYearsAtScreening']<18]
+result = pg.linear_regression(X=df[['AgeInYearsAtScreening']], y=df['StandingHeightCm'], remove_na=True)
+sns.regplot(x=df[['AgeInYearsAtScreening']], y=df['StandingHeightCm'])
