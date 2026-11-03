@@ -4,3 +4,5 @@ result = pd.DataFrame({
     "SD": x.std(), "Median": x.median(), "Minimum": x.min(),
     "Maximum": x.max(), "Skewness": x.skew(), "Kurtosis": x.kurt()
 })
+x= df [['A' , 'extra', 'group', 'ID' ]] 
+RESULT = X.describe()
