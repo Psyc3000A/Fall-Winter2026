@@ -6,4 +6,3 @@ result = pd.DataFrame({
 })
 x = df[['A', 'extra', 'group', 'ID']]
 result = x.describe()
-expected, observed, result = pg.chi2_independence(data=df, x='participant', y='treatment')
