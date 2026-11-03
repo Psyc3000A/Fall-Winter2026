@@ -1,2 +1,0 @@
-result = pg.linear_regression(X=df[['EverBreastfedOrFedBreastmilk']], y=df['StandingHeightCm'], remove_na=True)
-sns.regplot(x=df[['EverBreastfedOrFedBreastmilk']], y=df['StandingHeightCm'])
