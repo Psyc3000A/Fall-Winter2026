@@ -6,6 +6,8 @@ result = pd.DataFrame({
 })
 x = df[['A', 'extra', 'group', 'ID']]
 result = x.describe()
+
 expected, observed, result = pg.chi2_independence(data=df, x='participant', y='treatment')
+
 result = pg.linear_regression(X=df[['AgeInYearsAtScreening']], y=df['StandingHeightCm'], remove_na=True)
 sns.regplot(x=df[['AgeInYearsAtScreening']], y=df['StandingHeightCm'])
