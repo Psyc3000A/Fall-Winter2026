@@ -9,3 +9,7 @@ result = x.describe()
 #labquestion 3 below
 result = pg.linear_regression(X=df[['AgeInYearsAtScreening']], y=df['StandingHeightCm'], remove_na=True)
 sns.regplot(x=df[['AgeInYearsAtScreening']], y=df['StandingHeightCm'])
+#labquestion 4 below
+#the software accompanying labquestion4 is not functioning as properly. I've attempted to type the code myself
+result = pg.linear_regression([X =df[["AgeInYearsAtScreening" < 18], y=df["StandingHeightCm"], remove_na=True)
+children_sns.regplot(x=df["AgeInYearsAtScreening"], y=df["StandingHeightCm"].hist(bins=200, legend =True)
