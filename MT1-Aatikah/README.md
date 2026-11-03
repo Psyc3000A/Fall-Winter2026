@@ -1,2 +1,4 @@
 Lab Question 1:
-The description for the default dataset is in the file:
+The description for the default dataset is in the file: https://github.com/Psyc3000A/Fall-Winter2026/blob/main/MT1-Aatikah/Lab%20Q1%20Default%20dataset%20description.csv
+The description for the sleep data set table is in this file: 
+
