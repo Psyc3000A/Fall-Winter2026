@@ -1,0 +1,19 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import pingouin as pg
+datafile=pd.read_csv ("https://raw.githubusercontent.com/Psyc3000A/Data/refs/heads/main/sleep.csv")
+#display (datafile.groupby('group').describe())
+summary1 = (
+    datafile.groupby("group")["extra"]
+      .agg(
+          mean="mean",
+          std="std", #se=lambda x: x.sem(),
+          #n="count"
+      )
+      .reset_index()
+)
+#print(summary)
+
+#print (datafile["group"].dtype)
+summary=datafile.groupby("group")["extra"].agg(["mean", "std"]).reset_index()
+datafile["extra"].plot(kind="density")
