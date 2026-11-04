@@ -1,0 +1,21 @@
+#data set A
+(children["StandingHeightCm"] - children["StandingHeightCm"].mean()).hist()
+#vs
+((children["StandingHeightCm"] - children["StandingHeightCm"].mean())/children["StandingHeightCm"].std()).hist()
+
+#data set B
+children[["StandingHeightCm","AgeInYearsAtScreening"]].hist()
+#vs.
+children[["StandingHeightCm","AgeInYearsAtScreening"]].replace([7,9,77,99,777,999,7777,9999], pd.NA).astype("Float64").hist()
+
+#data set C
+children["AgeInYearsAtScreening"].describe()
+# vs.
+children["AgeInYearsAtScreening"].dropna().describe()
+
+#data set D
+import seaborn as sns
+import pingouin as pg
+pg.linear_regression(nhanes["StandingHeightCm"], nhanes["BodyMassIndexKgm2"],remove_na=True)
+#with vs. without this line:
+sns.regplot(data=nhanes,x="StandingHeightCm", y="BodyMassIndexKgm2",scatter_kws={"color": "C0", "alpha": 0.3},line_kws={"color"::"red"})
