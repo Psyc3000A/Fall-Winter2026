@@ -5,6 +5,11 @@ layout: default
 Psyc3000A Fall-Winter2026 repo
 [Go to the Main GitHub repo](https://github.com/Psyc3000A/Fall-Winter2026)
 
+# Example: New Markdown Page
+To test Markdown for Web content
+[Example: Markdown page](https://psyc3000a.github.io/Fall-Winter2026/MT1)
+
+
 # Data repo: Main Page
 
 Datasets, supporting files, and resources for PSYC 3000.
