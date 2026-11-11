@@ -1,0 +1,121 @@
+# %%
+!mamba install pandas
+
+# %%
+import pandas as pd
+datafile=pd.read_csv ("https://raw.githubusercontent.com/Psyc3000A/Data/refs/heads/main/sleep.csv")
+datafile.groupby('group').describe()
+
+# %%
+import pandas as pd
+import matplotlib.pyplot as plt
+nhanes=pd.read_csv("https://raw.githubusercontent.com/Psyc3000A/Data/refs/heads/main/nhanes.csv")
+
+children = nhanes[nhanes["AgeInYearsAtScreening"] < 18]
+children["StandingHeightCm"].hist(bins=200, legend=True)
+
+# %%
+(children["StandingHeightCm"] - children["StandingHeightCm"].mean()).hist()
+
+# %%
+((children["StandingHeightCm"] - children["StandingHeightCm"].mean())/children["StandingHeightCm"].std()).hist()
+
+# %%
+children[["StandingHeightCm","AgeInYearsAtScreening"]].hist()
+
+# %%
+children[["StandingHeightCm","AgeInYearsAtScreening"]].replace([7,9,77,99,777,999,7777,9999], pd.NA).astype("Float64").hist()
+
+# %%
+children["AgeInYearsAtScreening"].describe()
+
+# %%
+children["AgeInYearsAtScreening"].dropna().describe()
+
+# %%
+import seaborn as sns
+
+# %%
+import pingouin as pg
+
+# %%
+pg.linear_regression(nhanes["StandingHeightCm"], nhanes["BodyMassIndexKgm2"],remove_na=True)
+
+# %%
+sns.regplot(data=nhanes,x="StandingHeightCm", y="BodyMassIndexKgm2",scatter_kws={"color": "C0", "alpha": 0.3},line_kws={"color": "red"})
+
+# %%
+import pandas as pd # import other packages if errors messages tell you
+nhanes=pd.read_csv("https://raw.githubusercontent.com/Psyc3000A/Data/refs/heads/main/nhanes.csv")
+
+# %%
+children = nhanes[nhanes["AgeInYearsAtScreening"] < 18]
+
+# %%
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+
+# %%
+children["Gender_code"] = (children["Gender"].astype(str).str.lower().isin(["male", "1"])).astype(int)
+children  = children[["StandingHeightCm", "AgeInYearsAtScreening", "Gender_code"]].dropna()
+
+# %%
+m_age = LinearRegression(fit_intercept=False).fit(children[["AgeInYearsAtScreening"]],children["StandingHeightCm"])
+m_age_const = LinearRegression().fit(children[["AgeInYearsAtScreening"]], children["StandingHeightCm"])
+
+# %%
+m_full = LinearRegression().fit(children[["AgeInYearsAtScreening", "Gender_code"]],children["StandingHeightCm"])
+children = children.sort_values("AgeInYearsAtScreening")
+
+# %%
+children["pred_age"] = m_age.predict(children[["AgeInYearsAtScreening"]])
+children["pred_age_const"] = m_age_const.predict(children[["AgeInYearsAtScreening"]])
+children["pred_full"] = m_full.predict(children[["AgeInYearsAtScreening", "Gender_code"]])
+
+# %%
+children["Age_Gender"] = (children["AgeInYearsAtScreening"] * children["Gender_code"])
+
+# %%
+m_interaction = LinearRegression().fit(children[["AgeInYearsAtScreening","Gender_code","Age_Gender"]],children["StandingHeightCm"])
+
+# %%
+import matplotlib.pyplot as plt
+
+children["pred_interaction"] = m_interaction.predict(
+    children[["AgeInYearsAtScreening", "Gender_code", "Age_Gender"]]
+)
+
+fig, axes = plt.subplots(2, 2, figsize=(12, 9))
+
+models = [
+    ("Age without intercept", "pred_age"),
+    ("Age with intercept", "pred_age_const"),
+    ("Age and gender", "pred_full"),
+    ("Age, gender and interaction", "pred_interaction")
+]
+
+for ax, (title, prediction) in zip(axes.flat, models):
+    ax.scatter(
+        children["AgeInYearsAtScreening"],
+        children["StandingHeightCm"],
+        alpha=0.2,
+        s=10
+    )
+
+    for gender in [0, 1]:
+        group = children[children["Gender_code"] == gender]
+        ax.plot(
+            group["AgeInYearsAtScreening"],
+            group[prediction],
+            label=f"Gender {gender}"
+        )
+
+    ax.set_title(title)
+    ax.set_xlabel("Age (years)")
+    ax.set_ylabel("Height (cm)")
+    ax.legend()
+
+plt.tight_layout()
+plt.show()
+
+
