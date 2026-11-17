@@ -1,4 +1,4 @@
-A chi-square test of independence found no statistically significant association between treatment and outcome, χ²(106) = 105.00, p = .509.
+A chi-square test of independence found a statistically significant association between treatment and outcome, χ²(1) = 7.9059, p = .0049
 Examination of standardized residuals reveled that no treatment-outcome combination exceeded the 1.96 threshold 
 
 A chi-square test of independence found a statistically significant association between feeling depressed and sleeping troubles, χ²(9) = 966.72, p = .001. 
