@@ -1,0 +1,5 @@
+#Part A editable code
+expected, observed, result = pg.chi2_independence(data=df, x='treatment', y='outcome')
+
+#Part B editable code
+expected, observed, result = pg.chi2_independence(data=df, x='HowOftenDoYouFeelDepressed', y='TroubleSleepingOrSleepingTooMuch')
