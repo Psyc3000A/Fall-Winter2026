@@ -1,6 +1,7 @@
 #question1 
 expected, observed, result = pg.chi2_independence(data=df, x='outcome', y='treatment')
+residuals = (observed - expected) / np.sqrt (expected)
 
 #question2
 expected, observed, result = pg.chi2_independence(data=df, x='FeelingDownDepressedOrHopeless', y='TroubleSleepingOrSleepingTooMuch')
-
+residuals = (observed - expected) / np.sqrt (expected)
