@@ -11,3 +11,10 @@ I used the Categorical data set and ran a chi-square test on treatment (Program 
 I had to google what a "case" meant. It means one record in the dataset, here one participant (one row). I deleted participant 1 (Usual care, Not improved) and re-ran the test with 119 participants: χ²(1) = 7.27, p = .007, Cramér's V = .25. The relationship got slightly weaker but was still significant, so removing one case did not change the conclusion.
 
 When I first tried to delete a case using code, the app kept the deletion each time I clicked "Run analysis," so every run removed another participant and the chi-square kept changing. I noticed because the totals in the Observed table didn't add up. I reset the app and deleted the row directly in the data table instead, so exactly one case was removed.
+
+## Lab Question 3
+I uploaded the NHANES data set and ran a chi-square test on HowOftenDoYouFeelDepressed and EverToldDoctorHadTroubleSleeping. Only 5,436 of the 8,366 participants answered both questions, so the test used those 5,436. The result was significant, χ²(4) = 482.6, p < .001, Cramér's V = .30. People who felt depressed more often were much more likely to have told a doctor they had trouble sleeping (about 17% of those who never felt depressed vs. about 65% of those who felt depressed most often).
+
+I then deleted the first ten cases (rows) and re-ran the test. Three of those ten had missing answers, so only seven people actually left the analysis (5,429 remained). The result was almost identical: χ²(4) = 482.7, p < .001, Cramér's V = .30.
+
+Compared to Lab Question 2, where deleting one case out of 120 changed χ² from 7.91 to 7.27, deleting ten cases here made almost no difference. In a large sample, a few cases have very little influence on the result.
