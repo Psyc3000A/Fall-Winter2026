@@ -18,3 +18,10 @@ I uploaded the NHANES data set and ran a chi-square test on HowOftenDoYouFeelDep
 I then deleted the first ten cases (rows) and re-ran the test. Three of those ten had missing answers, so only seven people actually left the analysis (5,429 remained). The result was almost identical: χ²(4) = 482.7, p < .001, Cramér's V = .30.
 
 Compared to Lab Question 2, where deleting one case out of 120 changed χ² from 7.91 to 7.27, deleting ten cases here made almost no difference. In a large sample, a few cases have very little influence on the result.
+
+## Lab Question 4
+I ran a linear regression in the NHANES data with age in years at screening predicting standing height in cm. For all ages (n = 8,016), height = 138.95 + 0.48 × age, R² = .28. Age was a significant predictor (p < .001), but the fit was poor. The graph shows why: height rises quickly from age 2 to about 18 and then levels off in adulthood, so a single straight line does not fit the curved pattern.
+
+I then ran the same regression for children under 18 only (n = 2,572): height = 85.32 + 5.51 × age, R² = .90. For children, each extra year of age predicts about 5.5 cm more height, and age explains about 90% of the variation in height. The relationship is strong and close to linear.
+
+The comparison shows that a linear regression only works well when the relationship is actually linear. Mixing children and adults hides the strong age–height relationship in children, because adults stop growing.
