@@ -15,7 +15,6 @@ All analyses were run in the Student Statistics Lab (SPySS), "12. Chi-square tes
 | Usual care | 35 (58.3%) | 25 (41.7%) |
 
 Expected count in every cell = 42.5 (Improved) / 17.5 (Not improved).
-(Note: `partA_treatment_outcome_observed.csv` shows 49.5 / 10.5 / 35.5 / 24.5 because pingouin returns the Yates-adjusted observed table for 2 × 2 tests; the raw counts are the ones above.)
 
 **Test output (pingouin, Pearson with Yates continuity correction for 2 × 2):** χ²(1) = 7.906, p = .0049, Cramér's V = 0.257, power = .80
 (Without the correction: χ²(1) = 9.08, p = .003, V = 0.275.)
